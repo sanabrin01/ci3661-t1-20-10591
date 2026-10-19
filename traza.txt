@@ -1,0 +1,121 @@
+=====================================================================
+CI-3661 — Laboratorio de Lenguajes de Programación I (Sep–Dic 2026)
+Tarea 1: Práctica de Haskell
+Problema 7: Evaluación por sustitución
+Estudiante: Samuel Sanabria
+Carnet: 20-10591
+=====================================================================
+
+Los cuatro últimos dígitos del carnet 20-10591, en orden, son:
+d = [0, 5, 9, 1]
+con d1 = 0 y d2 = 5.
+
+---------------------------------------------------------------------
+(a) Reducción de: foldr (-) 0 [0, 5, 9, 1] hasta llegar a un número
+---------------------------------------------------------------------
+
+Recordando la definición recursiva de foldr:
+(1) foldr _ z []     = z
+(2) foldr f z (x:xs) = f x (foldr f z xs)
+
+Aplicando sustitución paso a paso:
+
+  foldr (-) 0 [0, 5, 9, 1]
+= 0 - (foldr (-) 0 [5, 9, 1])                     -- por ecuación (2) de foldr
+= 0 - (5 - (foldr (-) 0 [9, 1]))                  -- por ecuación (2) de foldr
+= 0 - (5 - (9 - (foldr (-) 0 [1])))               -- por ecuación (2) de foldr
+= 0 - (5 - (9 - (1 - (foldr (-) 0 []))))          -- por ecuación (2) de foldr
+= 0 - (5 - (9 - (1 - 0)))                         -- por ecuación (1) de foldr
+= 0 - (5 - (9 - 1))                               -- por aritmética: 1 - 0 = 1
+= 0 - (5 - 8)                                     -- por aritmética: 9 - 1 = 8
+= 0 - (-3)                                        -- por aritmética: 5 - 8 = -3
+= 3                                               -- por aritmética: 0 - (-3) = 3
+
+Resultado final: 3
+
+
+---------------------------------------------------------------------
+(b) Reducción de: foldl (-) 0 [0, 5, 9, 1] hasta llegar a un número
+---------------------------------------------------------------------
+
+Recordando la definición recursiva de foldl:
+(1) foldl _ z []     = z
+(2) foldl f z (x:xs) = foldl f (f z x) xs
+
+Aplicando sustitución paso a paso (notando que en Haskell la evaluación
+del acumulador es perezosa y no se reduce hasta el final):
+
+  foldl (-) 0 [0, 5, 9, 1]
+= foldl (-) (0 - 0) [5, 9, 1]                     -- por ecuación (2) de foldl
+= foldl (-) ((0 - 0) - 5) [9, 1]                  -- por ecuación (2) de foldl
+= foldl (-) (((0 - 0) - 5) - 9) [1]               -- por ecuación (2) de foldl
+= foldl (-) ((((0 - 0) - 5) - 9) - 1) []          -- por ecuación (2) de foldl
+= (((0 - 0) - 5) - 9) - 1                         -- por ecuación (1) de foldl
+= ((0 - 5) - 9) - 1                               -- por aritmética: 0 - 0 = 0
+= (-5 - 9) - 1                                    -- por aritmética: 0 - 5 = -5
+= -14 - 1                                         -- por aritmética: -5 - 9 = -14
+= -15                                             -- por aritmética: -14 - 1 = -15
+
+Resultado final: -15
+
+
+---------------------------------------------------------------------
+(c) Reducción de: miFoldl (-) 0 [0, 5] con nuestra definición
+---------------------------------------------------------------------
+
+Nuestra definición en Tarea1.hs es:
+(M) miFoldl f z xs = foldr (\x k acc -> k (f acc x)) id xs z
+
+Para f = (-), z = 0, xs = [0, 5], sea el paso del plegado:
+step = (\x k acc -> k (acc - x))
+
+Aplicando las ecuaciones y reglas de beta-reducción:
+
+  miFoldl (-) 0 [0, 5]
+= foldr (\x k acc -> k (acc - x)) id [0, 5] 0
+                                                  -- por ecuación (M) de miFoldl
+= ((\x k acc -> k (acc - x)) 0 (foldr (\x k acc -> k (acc - x)) id [5])) 0
+                                                  -- por ecuación (2) de foldr sobre [0, 5]
+= (\k acc -> k (acc - 0)) (foldr (\x k acc -> k (acc - x)) id [5]) 0
+                                                  -- por beta-reducción en x = 0
+= (\acc -> (foldr (\x k acc' -> k' (acc' - x)) id [5]) (acc - 0)) 0
+                                                  -- por beta-reducción en k
+= (foldr (\x k acc -> k (acc - x)) id [5]) (0 - 0)
+                                                  -- por beta-reducción en acc = 0
+= ((\x k acc -> k (acc - x)) 5 (foldr (\x k acc -> k (acc - x)) id [])) (0 - 0)
+                                                  -- por ecuación (2) de foldr sobre [5]
+= ((\x k acc -> k (acc - x)) 5 id) (0 - 0)
+                                                  -- por ecuación (1) de foldr sobre []
+= (\k acc -> k (acc - 5)) id (0 - 0)
+                                                  -- por beta-reducción en x = 5
+= (\acc -> id (acc - 5)) (0 - 0)
+                                                  -- por beta-reducción en k = id
+= id ((0 - 0) - 5)
+                                                  -- por beta-reducción en acc = (0 - 0)
+= (0 - 0) - 5
+                                                  -- por definición de id: id y = y
+= 0 - 5
+                                                  -- por aritmética: 0 - 0 = 0
+= -5
+                                                  -- por aritmética: 0 - 5 = -5
+
+Resultado final: -5
+
+
+---------------------------------------------------------------------
+(d) Explicación de la diferencia y condición de coincidencia
+---------------------------------------------------------------------
+
+Los cómputos (a) y (b) dan resultados distintos porque foldl asocia las
+operaciones hacia la izquierda, construyendo la expresión (((0 - 0) - 5) - 9) - 1,
+mientras que foldr las asocia hacia la derecha, construyendo la expresión
+0 - (5 - (9 - (1 - 0))). Dado que la resta (-) no es una operación asociativa
+(es decir, en general (x - y) - z /= x - (y - z)), la alteración del orden de
+agrupación de los paréntesis modifica de manera determinante el valor obtenido.
+
+Para garantizar que foldr op z xs == foldl op z xs para cualquier lista finita xs,
+el operador 'op' debe ser asociativo (cumpliendo (x `op` y) `op` w == x `op` (y `op` w)
+para todos x, y, w) y el valor inicial 'z' debe ser el elemento neutro de dicho operador
+por ambos lados (cumpliendo z `op` x == x y x `op` z == x para todo x). En términos
+algebraicos, el conjunto de valores junto con la operación 'op' y la identidad 'z'
+deben constituir un monoide (como ocurre con (+) y 0, (*) y 1, o (++) y []).
