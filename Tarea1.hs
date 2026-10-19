@@ -56,9 +56,19 @@ esPalindromo xs = limpio == invertir limpio
 -- A2
 -- Explica aquí, en dos o tres líneas, por qué tu solución recorre la
 -- lista una sola vez:
---
+-- La función auxiliar recursiva 'recorrer' procesa la lista elemento a elemento
+-- actualizando simultáneamente en cada paso tanto el mayor como el menor vistos.
+-- De esta forma se realiza una única pasada lineal sobre la estructura sin recomputar.
 mayorYMenor :: Ord a => [a] -> Maybe (a, a)
-mayorYMenor = undefined
+mayorYMenor []     = Nothing
+mayorYMenor (x:xs) = Just (recorrer xs x x)
+  where
+    recorrer :: Ord a => [a] -> a -> a -> (a, a)
+    recorrer [] may men = (may, men)
+    recorrer (y:ys) may men =
+      let nuevoMay = if y > may then y else may
+          nuevoMen = if y < men then y else men
+      in recorrer ys nuevoMay nuevoMen
 
 -- A3
 leerHora :: String -> Either String (Int, Int)
