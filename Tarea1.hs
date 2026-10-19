@@ -35,7 +35,23 @@ import Data.Char (isAlphaNum, isDigit, toLower, digitToInt)
 
 -- A1
 esPalindromo :: String -> Bool
-esPalindromo = undefined
+esPalindromo xs = limpio == invertir limpio
+  where
+    limpiar :: String -> String
+    limpiar [] = []
+    limpiar (c:cs)
+      | isAlphaNum c = toLower c : limpiar cs
+      | otherwise    = limpiar cs
+
+    invertir :: String -> String
+    invertir ys = revAux ys []
+
+    revAux :: String -> String -> String
+    revAux [] acc     = acc
+    revAux (c:cs) acc = revAux cs (c : acc)
+
+    limpio :: String
+    limpio = limpiar xs
 
 -- A2
 -- Explica aquí, en dos o tres líneas, por qué tu solución recorre la
