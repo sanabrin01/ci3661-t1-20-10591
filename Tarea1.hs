@@ -103,7 +103,15 @@ duracion s1 s2 =
 
 -- B1
 promedioSobreUmbral :: Double -> [Double] -> Maybe Double
-promedioSobreUmbral = undefined
+promedioSobreUmbral umbral xs =
+  case foldl paso (0.0, 0.0) xs of
+    (_, 0.0)       -> Nothing
+    (suma, cuenta) -> Just (suma / cuenta)
+  where
+    paso :: (Double, Double) -> Double -> (Double, Double)
+    paso (s, c) x
+      | x > umbral = (s + x, c + 1.0)
+      | otherwise  = (s, c)
 
 -- B2
 movimientosCaballo :: (Int, Int) -> [(Int, Int)]
