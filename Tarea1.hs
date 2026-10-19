@@ -115,10 +115,25 @@ promedioSobreUmbral umbral xs =
 
 -- B2
 movimientosCaballo :: (Int, Int) -> [(Int, Int)]
-movimientosCaballo = undefined
+movimientosCaballo (r, c) =
+  [ (r', c')
+  | (dr, dc) <- [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
+  , let r' = r + dr
+  , let c' = c + dc
+  , r' >= 1, r' <= 8, c' >= 1, c' <= 8
+  ]
 
 enDosSaltos :: (Int, Int) -> Int
-enDosSaltos = undefined
+enDosSaltos casilla =
+  length (foldr agregarSinRepetir [] todosDestinos)
+  where
+    todosDestinos :: [(Int, Int)]
+    todosDestinos = concatMap movimientosCaballo (movimientosCaballo casilla)
+
+    agregarSinRepetir :: (Int, Int) -> [(Int, Int)] -> [(Int, Int)]
+    agregarSinRepetir x acc
+      | x `elem` acc = acc
+      | otherwise    = x : acc
 
 -- B3
 miMap :: (a -> b) -> [a] -> [b]
