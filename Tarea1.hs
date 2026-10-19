@@ -5,8 +5,9 @@
 --  Carnet: 20-10591
 --
 --  Declaración de uso de herramientas de IA (obligatoria, ver enunciado):
---  Se utilizó Antigravity (asistente de IA) para consultas de diseño,
---  revisión de restricciones del enunciado y apoyo en la elaboración de pruebas.
+--  Se utilizó Antigravity para consultas de diseño,
+--  revisión de restricciones del enunciado y apoyo en la elaboración de pruebas
+--  junto con una guida en docx para mayor comprension de la tarea.
 -- =====================================================================
 --  No cambies el nombre del módulo ni la lista de exportación, ni las
 --  firmas de las funciones. Puedes agregar todas las funciones auxiliares

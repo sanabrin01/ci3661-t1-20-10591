@@ -1,18 +1,15 @@
-=====================================================================
 CI-3661 — Laboratorio de Lenguajes de Programación I (Sep–Dic 2026)
 Tarea 1: Práctica de Haskell
 Problema 7: Evaluación por sustitución
-Estudiante: Samuel Sanabria
+Samuel Sanabria
 Carnet: 20-10591
-=====================================================================
 
 Los cuatro últimos dígitos del carnet 20-10591, en orden, son:
 d = [0, 5, 9, 1]
 con d1 = 0 y d2 = 5.
 
----------------------------------------------------------------------
+
 (a) Reducción de: foldr (-) 0 [0, 5, 9, 1] hasta llegar a un número
----------------------------------------------------------------------
 
 Recordando la definición recursiva de foldr:
 (1) foldr _ z []     = z
@@ -34,9 +31,9 @@ Aplicando sustitución paso a paso:
 Resultado final: 3
 
 
----------------------------------------------------------------------
+
 (b) Reducción de: foldl (-) 0 [0, 5, 9, 1] hasta llegar a un número
----------------------------------------------------------------------
+
 
 Recordando la definición recursiva de foldl:
 (1) foldl _ z []     = z
@@ -59,9 +56,9 @@ del acumulador es perezosa y no se reduce hasta el final):
 Resultado final: -15
 
 
----------------------------------------------------------------------
+
 (c) Reducción de: miFoldl (-) 0 [0, 5] con nuestra definición
----------------------------------------------------------------------
+
 
 Nuestra definición en Tarea1.hs es:
 (M) miFoldl f z xs = foldr (\x k acc -> k (f acc x)) id xs z
@@ -102,9 +99,9 @@ Aplicando las ecuaciones y reglas de beta-reducción:
 Resultado final: -5
 
 
----------------------------------------------------------------------
+
 (d) Explicación de la diferencia y condición de coincidencia
----------------------------------------------------------------------
+
 
 Los cómputos (a) y (b) dan resultados distintos porque foldl asocia las
 operaciones hacia la izquierda, construyendo la expresión (((0 - 0) - 5) - 9) - 1,
