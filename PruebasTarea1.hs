@@ -57,6 +57,16 @@ pruebas =
   , ("B3 miFilter",            miFilter even [1 .. 10 :: Int] == [2, 4, 6, 8, 10])
   , ("B3 miFoldl",             miFoldl (-) 10 [1, 2, 3 :: Int] == 4)
   , ("B3 miFoldl orden",       miFoldl (flip (:)) [] "abc" == "cba")
+  -- Casos borde adicionales
+  , ("A1 sólo símbolos",       esPalindromo "!?.#$")
+  , ("A1 un solo carácter",    esPalindromo "x")
+  , ("A2 elementos idénticos", mayorYMenor [-5, -5, -5 :: Int] == Just (-5, -5))
+  , ("A3 ambos fuera de rango",leerHora "24:60" == Left "hora fuera de rango")
+  , ("A3 hora límite 23:59",   leerHora "23:59" == Right (23, 59))
+  , ("A3 duración misma hora", duracion "14:15" "14:15" == Right 0)
+  , ("B1 lista vacía",         promedioSobreUmbral 5 [] == Nothing)
+  , ("B1 iguales al umbral",   promedioSobreUmbral 3 [3, 3, 3] == Nothing)
+  , ("B2 esquina opuesta",     movimientosCaballo (8, 8) == [(6, 7), (7, 6)])
   ]
 
 main :: IO ()
