@@ -75,6 +75,7 @@ mayorYMenor (x:xs) = Just (recorrer xs x x)
 leerHora :: String -> Either String (Int, Int)
 leerHora [h1, h2, ':', m1, m2]
   | not (isDigit h1 && isDigit h2 && isDigit m1 && isDigit m2) = Left "formato inválido"
+  -- Si tanto hora como minutos estan fuera de rango (ej. "24:60"), se reporta la hora primero
   | h > 23    = Left "hora fuera de rango"
   | m > 59    = Left "minutos fuera de rango"
   | otherwise = Right (h, m)
@@ -87,14 +88,17 @@ duracion :: String -> String -> Either String Int
 duracion s1 s2 =
   case leerHora s1 of
     Left err1 -> Left err1
-    Right (h1, m1) ->
+    Right t1 ->
       case leerHora s2 of
         Left err2 -> Left err2
-        Right (h2, m2) ->
-          let min1 = h1 * 60 + m1
-              min2 = h2 * 60 + m2
+        Right t2 ->
+          let min1 = aMinutos t1
+              min2 = aMinutos t2
               diff = min2 - min1
           in Right (if diff < 0 then diff + 24 * 60 else diff)
+  where
+    aMinutos :: (Int, Int) -> Int
+    aMinutos (h, m) = h * 60 + m
 
 -- =====================================================================
 -- Parte B: orden superior.
